@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apuestas de Caballeros — Administración</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="loginView" class="login-wrap">
+  <div class="login-card">
+    <div class="brand">Administración</div>
+    <div class="tagline">Apuestas de Caballeros</div>
+    <div id="loginError"></div>
+    <form id="loginForm">
+      <div class="form-group">
+        <label>Usuario</label>
+        <input id="loginUser" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input id="loginPass" type="password" required autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary" style="width:100%" type="submit">Entrar</button>
+    </form>
+    <p class="helptext" style="margin-top:14px;"><a href="#" id="forgotLink" style="color:var(--accent);">¿Olvidaste tu contraseña?</a></p>
+    <p class="helptext"><a href="index.html" style="color:var(--gold);">← Volver a la app</a></p>
+  </div>
+</div>
+
+<div id="recoverView" class="login-wrap" style="display:none;">
+  <div class="login-card">
+    <div class="brand" style="font-size:22px;">Recuperar acceso</div>
+    <p class="helptext" style="margin-bottom:18px;">Solo funciona si el servidor tiene configurada una llave de recuperación (ADMIN_RECOVERY_KEY). Si no la configuraste, pide a otro administrador que te restablezca la contraseña desde su panel.</p>
+    <div id="recoverError"></div>
+    <div id="recoverSuccess"></div>
+    <form id="recoverForm">
+      <div class="form-group">
+        <label>Tu usuario</label>
+        <input id="rc-user" required>
+      </div>
+      <div class="form-group">
+        <label>Llave de recuperación del servidor</label>
+        <input id="rc-key" type="password" required>
+      </div>
+      <div class="form-group">
+        <label>Nueva contraseña</label>
+        <input id="rc-newpass" type="password" required minlength="4">
+      </div>
+      <button class="btn btn-primary" style="width:100%" type="submit">Restablecer contraseña</button>
+    </form>
+    <p class="helptext" style="margin-top:16px;"><a href="#" id="backToLoginLink" style="color:var(--gold);">← Volver a iniciar sesión</a></p>
+  </div>
+</div>
+
+<div id="appView" style="display:none;">
+  <header class="club-header">
+    <div class="brand">Apuestas de Caballeros<small>administración</small></div>
+    <div class="header-right">
+      <div class="avatar-circle">👤</div>
+      <span id="whoami"></span>
+      <span class="badge-role">Admin</span>
+      <button class="btn btn-danger btn-sm" id="logoutBtn">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <details class="collapsible">
+      <summary>Mi cuenta</summary>
+      <div class="collapsible-body">
+        <div id="myAccountError"></div>
+        <div id="myAccountSuccess"></div>
+        <form id="myAccountForm">
+          <div class="form-group">
+            <label>Nuevo usuario (déjalo igual si no lo quieres cambiar)</label>
+            <input id="ma-user" required>
+          </div>
+          <div class="form-group">
+            <label>Nueva contraseña (déjala en blanco si no la quieres cambiar)</label>
+            <input id="ma-newpass" type="password" placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label>Tu contraseña actual (para confirmar el cambio)</label>
+            <input id="ma-currentpass" type="password" required>
+          </div>
+          <button class="btn btn-primary" type="submit">Guardar cambios</button>
+        </form>
+      </div>
+    </details>
+
+    <h3 class="section-title">Quinielas</h3>
+    <div class="card" style="max-width:none; margin-bottom:20px;">
+      <div id="createQuinielaError"></div>
+      <div id="createQuinielaSuccess"></div>
+      <form id="createQuinielaForm">
+        <div class="form-group"><label>Nombre de la quiniela</label><input id="qn-name" placeholder="Ej. Jornada 10" required></div>
+        <label>Partidos (máximo 20)</label>
+        <div id="qnMatchesInputs" style="margin-bottom:10px;"></div>
+        <div style="display:flex; gap:14px; align-items:center; margin-bottom:16px;">
+          <button type="button" class="btn btn-ghost btn-sm" id="addMatchBtn">+ Agregar partido</button>
+          <span class="helptext" id="matchCountLabel" style="margin:0;"></span>
+        </div>
+        <button class="btn btn-primary" type="submit">Crear quiniela</button>
+      </form>
+    </div>
+
+    <div id="quinielasListView">
+      <div id="quinielasAdminList"></div>
+    </div>
+
+    <div id="quinielaAdminDetail" style="display:none; margin-bottom:20px;">
+      <button class="btn btn-ghost btn-sm" id="backToQuinielasAdminBtn" style="margin-bottom:14px;">← Volver a Quinielas</button>
+      <div class="card" style="max-width:none;">
+        <h3 id="qnDetailName" style="font-family:var(--font-display); margin-top:0;"></h3>
+
+        <h4 style="font-family:var(--font-display); font-weight:600;">Capturar resultados</h4>
+        <div id="qnResultsMatches"></div>
+        <button class="btn btn-primary btn-sm" id="saveResultsBtn" style="margin-top:8px;">Guardar resultados</button>
+
+        <h4 style="font-family:var(--font-display); font-weight:600; margin-top:28px;">Entradas</h4>
+        <div style="overflow-x:auto;">
+          <table id="qnEntriesTable"><thead><tr><th>Usuario</th><th>Código</th><th>Aciertos</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+
+        <h4 style="font-family:var(--font-display); font-weight:600; margin-top:28px;">Ranking</h4>
+        <div style="overflow-x:auto; margin-bottom:10px;">
+          <table id="qnRankingTable"><thead><tr><th>#</th><th>Usuario</th><th>Aciertos</th><th>Premio</th></tr></thead><tbody></tbody></table>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="exportRankingBtn">Descargar ranking en Excel</button>
+
+        <div style="margin-top:28px; border-top:1px solid rgba(148,178,214,0.15); padding-top:16px;">
+          <button class="btn btn-danger btn-sm" id="deleteQuinielaBtn">Borrar esta quiniela</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="quinielaEntryModal" class="modal-overlay" style="display:none;">
+      <div class="modal" style="max-width:480px; text-align:left;">
+        <div style="font-family:var(--font-display); font-weight:600; font-size:18px; margin-bottom:14px;" id="qnEntryModalTitle"></div>
+        <div id="qnEntryModalBody"></div>
+        <button class="btn btn-primary" style="margin-top:16px; width:100%;" id="closeQnEntryModalBtn">Cerrar</button>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+      <div class="admin-col-left">
+
+        <h3 class="section-title">Apuestas tomadas — para cobro</h3>
+        <p class="helptext" style="margin-bottom:10px;">Quién le apostó a quién. Marca la casilla cuando ambos ya te hayan pagado — si no está marcada, se interpreta como no pagada.</p>
+        <div style="overflow-x:auto; margin-bottom:8px;">
+          <table id="contractsTable"><thead><tr><th>Pagada</th><th>Ticket</th><th>Descripción</th><th>Registró</th><th>Tomó</th><th>Monto</th></tr></thead><tbody></tbody></table>
+        </div>
+
+        <h3 class="section-title">Archivo</h3>
+        <p class="helptext" style="margin-bottom:10px;">Respaldo completo de apuestas tomadas, en Excel, para no saturar la app con el tiempo.</p>
+        <div class="card" style="max-width:none; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+          <button class="btn btn-primary btn-sm" id="exportExcelBtn">Descargar Excel</button>
+          <button class="btn btn-ghost btn-sm" id="clearPaidBtn">Limpiar apuestas ya pagadas</button>
+          <span class="helptext" style="margin:0;">Recomendado: descarga el Excel antes de limpiar.</span>
+        </div>
+
+        <h3 class="section-title">Todas las apuestas registradas</h3>
+        <div style="overflow-x:auto;">
+          <table id="offersTable"><thead><tr><th>Ticket</th><th>Descripción</th><th>Creador</th><th>Monto</th><th>Cupo</th><th>Estado</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+
+      <div class="admin-col-right">
+        <h3 class="section-title">Dar de alta usuario</h3>
+        <div class="card" style="max-width:none; margin-bottom:24px;">
+          <div id="createUserError"></div>
+          <div id="createUserSuccess"></div>
+          <form id="createUserForm">
+            <div class="form-group"><label>Usuario</label><input id="nu-user"></div>
+            <div class="form-group"><label>Contraseña (mínimo 4 caracteres)</label><input id="nu-pass" type="password"></div>
+            <div class="form-group">
+              <label>Rol</label>
+              <select id="nu-role"><option value="user">Usuario</option><option value="admin">Administrador</option></select>
+            </div>
+            <button class="btn btn-primary" type="submit">Dar de alta</button>
+          </form>
+        </div>
+
+        <h3 class="section-title">Usuarios</h3>
+        <div class="search-input-wrap">
+          <input id="userSearch" placeholder="Buscar usuario…">
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="usersTable"><thead><tr><th>Usuario</th><th>Rol</th><th>Acción</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>
